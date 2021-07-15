@@ -20,10 +20,10 @@ namespace AppTest.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ContatoDTO>> GetAll()
+        public List<ContatoDTO> GetAll()
         {
-            var contatos = await _contatoRepository.GetAll();
-            return _mapper.Map<IEnumerable<ContatoDTO>>(contatos);
+            var contatos = _contatoRepository.GetAll();
+            return _mapper.Map<List<ContatoDTO>>(contatos);
         }
 
         public async Task<ContatoDTO> GetById(int id)
@@ -32,14 +32,16 @@ namespace AppTest.Application.Services
             return _mapper.Map<ContatoDTO>(contato);
         }
 
-        public async Task Add(ContatoDTO contatoDTO)
+        public ContatoDTO Add(ContatoDTO contatoDTO)
         {
             var validaNuloOuVazio = ContatoValidation.ValidarCadastroContato(contatoDTO);
-            if (validaNuloOuVazio)
+            if (validaNuloOuVazio.Valido)
             {
                 var contato = _mapper.Map<Contato>(contatoDTO);
-                await _contatoRepository.Add(contato);
-            }            
+                _contatoRepository.Add(contato);
+            }
+
+            return validaNuloOuVazio;
         }
 
         public async Task Update(ContatoDTO contatoDTO)

@@ -21,9 +21,9 @@ namespace AppTest.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ContatoDTO>>> GetAll()
+        public ActionResult<IEnumerable<ContatoDTO>> GetAll()
         {
-            var contatos = await _contatoService.GetAll();
+            var contatos = _contatoService.GetAll();
 
             if (contatos == null)
                 return NotFound("Contatos não encontrados");
@@ -48,9 +48,12 @@ namespace AppTest.Api.Controllers
             if (contato == null)
                 return BadRequest("Dados inválidos!");
 
-            await _contatoService.Add(contato);
+            var contatoResult = _contatoService.Add(contato);
 
-            return new CreatedAtRouteResult("GetById", new { id = contato.Id }, contato);
+            if (contatoResult.Valido)
+                return Ok(contato);
+            else
+                return BadRequest(contato.Erro);
         }
     }
 }

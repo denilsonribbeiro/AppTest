@@ -1,54 +1,94 @@
-﻿using AppTest.Application.DTOs;
-using AppTest.Application.Validations;
-using AppTest.Domain.Entities;
-using AppTest.Test.Util;
-using ExpectedObjects;
-using FluentAssertions;
+﻿using AppTest.Api.Controllers;
+using AppTest.Application.DTOs;
+using AppTest.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace AppTest.Test
 {
     public class ContatoUnitTest
     {
-        public string _nome;
-        public DateTime _dataNascimento;
-        public bool _isAtivo;
-        public string _sexo;
-        public int? _idade;
-
-        public ContatoUnitTest()
+        private List<ContatoDTO> GetContatoTeste()
         {
-            _nome = "João da Silva";
-            _dataNascimento = DateTime.Now;
-            _isAtivo = true;
-            _sexo = "Masculino";
-            _idade = 30;
-        }
-
-        [Fact]
-        public void CreateContato_WithValidObject_ResultSuccess()
-        {
-            var contatoObj = new
+            return new List<ContatoDTO>()
             {
-                Nome = _nome,
-                DataNascimento = _dataNascimento,
-                IsAtivo = _isAtivo,
-                Sexo = _sexo,
-                Idade = _idade
-            };
+                new ContatoDTO
+                {
+                    Id = 1,
+                    Nome = "Maria",
+                    DataNascimento = new DateTime(2020,3,3)
+                },
+                new ContatoDTO
+                {
+                    Id = 2,
+                    Nome = "Joao"
+                },
+                new ContatoDTO
+                {
+                    Id = 0,
+                    Nome = "Erro",
+                    DataNascimento = new DateTime(2022,3,3),
+                    Sexo = "Masculino"
 
-            var contato = new Contato(contatoObj.Nome, contatoObj.DataNascimento, contatoObj.IsAtivo, contatoObj.Sexo, contatoObj.Idade);
-            contatoObj.ToExpectedObject().ShouldMatch(contato);
+                }
+            };
         }
+
 
         [Fact]
-        public void CreateContato_WithEmptyName_ResultError()
+        public void Get_Contato_With_ResultSuccess()
         {
-            Assert.Throws<ArgumentException>(() => new Contato(string.Empty, _dataNascimento, _isAtivo, _sexo, _idade))
-                .WithMessage("O nome não pode ser vazio.");
+            //arrange
+            var mockServico = new Mock<IContatoService>();
+            mockServico.Setup(mockServico => mockServico.GetAll()).Returns(GetContatoTeste());
+
+            var controllerS = new ContatoController(mockServico.Object);
+
+            //act
+            var result = controllerS.GetAll();
+            var resultOk = result.Result as OkObjectResult;
+
+            //assert
+            Assert.Equal(3, (resultOk.Value as List<ContatoDTO>).Count);
+
         }
+
+        //[Fact]
+        //public void CreateContato_WithEmptyName_ResultError()
+        //{
+        //    //arrange
+        //    var mockServico = new Mock<IContatoService>();
+        //    mockServico.Setup(mockServico => mockServico.Add(GetContatoTeste()[2])).Returns(GetContatoTeste()[2]);
+        //    var controllerS = new ContatoController(mockServico.Object);
+
+        //    //act
+        //    var result = controllerS.Post(GetContatoTeste()[2]);
+        //    var resultOk = result.Result as OkObjectResult;
+
+        //    Assert.False((resultOk.Value as ContatoDTO).Valido);
+
+        //}
+
+        //[Fact]
+        //public void CreateContato_WithEmptyName_ResultError()
+        //{
+        //    //arrange
+        //    var mockServico = new Mock<IContatoService>();
+        //    mockServico.Setup(mockServico => mockServico.Add(GetContatoTeste()[2])).Returns(GetContatoTeste()[2]);
+        //    var controllerS = new ContatoController(mockServico.Object);
+
+        //    //act
+        //    var result = controllerS.Post(GetContatoTeste()[2]);
+        //    var resultOk = result.Result as OkObjectResult;
+
+        //    Assert.False((resultOk.Value as ContatoDTO).Valido);
+
+        //}
+
+
+
     }
 }

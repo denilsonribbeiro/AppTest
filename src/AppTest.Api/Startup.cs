@@ -1,3 +1,5 @@
+using AppTest.Application.Interfaces;
+using AppTest.Application.Services;
 using AppTest.Infra.Contexts;
 using AppTest.Infra.Ioc;
 using Microsoft.AspNetCore.Builder;
@@ -32,6 +34,9 @@ namespace AppTest.Api
             services.AddControllers();
             //var connectionString = Configuration.GetConnectionString("SqlConnection");
             //services.AddDbContext<AppTestContext>(options => options.UseSqlServer(connectionString, s => s.MigrationsAssembly("AppTest.Infra")));
+
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IContatoService, ContatoService>();
 
             services.AddSwaggerGen(config => {
                 config.ResolveConflictingActions(apiRoute => apiRoute.First());

@@ -15,11 +15,23 @@ namespace AppTest.Application.Validations
                 throw new ContatoValidation(error);
         }
 
-        public static bool ValidarCadastroContato(ContatoDTO contato)
+        public static ContatoDTO ValidarCadastroContato(ContatoDTO contato)
         {
-            When(string.IsNullOrEmpty(contato.Nome), "O nome não pode ser vazio.");
+            contato.Valido = true;
 
-            return false;
+            if (string.IsNullOrEmpty(contato.Nome))
+            {
+                contato.Erro = "Campo nao pode ser vazio";
+                contato.Valido = false;
+            }
+
+            if (contato.DataNascimento > DateTime.Now)
+            {
+                contato.Erro = "Data de nascimento é maior que a data atual";
+                contato.Valido = false;
+            }
+
+            return contato;
         }
     }
 }

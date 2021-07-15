@@ -21,5 +21,8 @@ namespace AppTest.Application.DTOs
         public string Sexo { get; set; }
         public int? Idade { get; set; }
 
+        public bool Valido { get; set; }
+        public string Erro { get; set; }
+
     }
 }

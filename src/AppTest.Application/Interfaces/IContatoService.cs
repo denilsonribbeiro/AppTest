@@ -8,9 +8,9 @@ namespace AppTest.Application.Interfaces
 {
     public interface IContatoService
     {
-        Task<IEnumerable<ContatoDTO>> GetAll();
+        List<ContatoDTO> GetAll();
         Task<ContatoDTO> GetById(int id);
-        Task Add(ContatoDTO contato);
+        ContatoDTO Add(ContatoDTO contato);
         Task Update(ContatoDTO contato);
         Task Delete(int id);
     }
